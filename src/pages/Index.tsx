@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { ExpenseForm } from "@/components/expenses/ExpenseForm";
 import { ExpenseList } from "@/components/expenses/ExpenseList";
+import { ExpenseSummary } from "@/components/expenses/ExpenseSummary";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 
@@ -33,6 +34,7 @@ const Index = () => {
         {session ? (
           <div className="space-y-6">
             <ExpenseForm />
+            <ExpenseSummary />
             <ExpenseList />
           </div>
         ) : (

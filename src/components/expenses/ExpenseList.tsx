@@ -27,12 +27,14 @@ const categories = {
   daily: "日用品",
   entertainment: "娯楽費",
   other: "その他",
-};
+} as const;
+
+type Category = keyof typeof categories;
 
 type Expense = {
   id: string;
   date: string;
-  category: keyof typeof categories;
+  category: Category;
   amount: number;
   memo: string | null;
 };
@@ -51,7 +53,12 @@ export const ExpenseList = () => {
         .order("date", { ascending: false });
 
       if (error) throw error;
-      return data;
+      
+      // Transform the data to ensure category is of the correct type
+      return data.map(expense => ({
+        ...expense,
+        category: expense.category as Category // Type assertion since we know the values are valid
+      }));
     },
   });
 
@@ -104,7 +111,7 @@ export const ExpenseList = () => {
             {expenses.map((expense) => (
               <TableRow key={expense.id}>
                 <TableCell>{format(new Date(expense.date), "yyyy/MM/dd")}</TableCell>
-                <TableCell>{categories[expense.category as keyof typeof categories]}</TableCell>
+                <TableCell>{categories[expense.category]}</TableCell>
                 <TableCell>¥{expense.amount.toLocaleString()}</TableCell>
                 <TableCell>{expense.memo || "-"}</TableCell>
                 <TableCell className="space-x-2">

@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      credit_card_payments: {
+        Row: {
+          card_name: string
+          created_at: string
+          description: string | null
+          id: string
+          payment_amount: number
+          payment_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          card_name: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          payment_amount: number
+          payment_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          card_name?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          payment_amount?: number
+          payment_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       expenses: {
         Row: {
           amount: number
@@ -117,6 +150,39 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          amount: number
+          billing_cycle: string
+          created_at: string
+          id: string
+          name: string
+          next_billing_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          billing_cycle: string
+          created_at?: string
+          id?: string
+          name: string
+          next_billing_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          billing_cycle?: string
+          created_at?: string
+          id?: string
+          name?: string
+          next_billing_date?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }

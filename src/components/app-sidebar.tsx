@@ -1,4 +1,4 @@
-import { Home, CreditCard, Receipt, Wallet } from "lucide-react"
+import { CreditCard, FileText, Home, List, Settings } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -9,6 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Link } from "react-router-dom"
 
 const menuItems = [
   {
@@ -17,19 +18,24 @@ const menuItems = [
     icon: Home,
   },
   {
-    title: "支出管理",
-    url: "#expenses",
-    icon: Receipt,
-  },
-  {
-    title: "固定費",
-    url: "#fixed-expenses",
-    icon: Wallet,
+    title: "サブスクリプション",
+    url: "/subscriptions",
+    icon: List,
   },
   {
     title: "クレジットカード",
-    url: "#credit-cards",
+    url: "/credit-cards",
     icon: CreditCard,
+  },
+  {
+    title: "支出管理",
+    url: "/expenses",
+    icon: FileText,
+  },
+  {
+    title: "設定",
+    url: "/settings",
+    icon: Settings,
   },
 ]
 
@@ -44,10 +50,10 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link to={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

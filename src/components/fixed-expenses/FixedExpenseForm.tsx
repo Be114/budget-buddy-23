@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const FixedExpenseForm = () => {
-  const [name, setName] = useState("");
+  const [templates, setTemplates] = useState(Array(10).fill(""));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -23,23 +23,37 @@ export const FixedExpenseForm = () => {
         throw new Error("ユーザーが見つかりません");
       }
 
-      const { error } = await supabase.from("fixed_expense_templates").insert({
-        name,
-        amount: 0,
-        user_id: user.id,
-      });
+      // Filter out empty template names
+      const validTemplates = templates.filter(name => name.trim() !== "");
+
+      if (validTemplates.length === 0) {
+        toast({
+          title: "エラー",
+          description: "少なくとも1つのテンプレート名を入力してください",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { error } = await supabase.from("fixed_expense_templates").insert(
+        validTemplates.map(name => ({
+          name,
+          amount: 0,
+          user_id: user.id,
+        }))
+      );
 
       if (error) throw error;
 
       toast({
         title: "固定費テンプレートを登録しました",
-        description: `${name}を登録しました`,
+        description: `${validTemplates.length}件のテンプレートを登録しました`,
       });
 
       queryClient.invalidateQueries({ queryKey: ["fixed-expenses"] });
-      setName("");
+      setTemplates(Array(10).fill(""));
     } catch (error) {
-      console.error("Error inserting fixed expense:", error);
+      console.error("Error inserting fixed expense templates:", error);
       toast({
         title: "エラーが発生しました",
         description: "固定費の登録に失敗しました。もう一度お試しください。",
@@ -50,6 +64,12 @@ export const FixedExpenseForm = () => {
     }
   };
 
+  const handleTemplateChange = (index: number, value: string) => {
+    const newTemplates = [...templates];
+    newTemplates[index] = value;
+    setTemplates(newTemplates);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -58,17 +78,20 @@ export const FixedExpenseForm = () => {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium">
-              名称
+            <label className="text-sm font-medium">
+              名称（最大10件まで登録可能）
             </label>
-            <Input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              placeholder="家賃"
-            />
+            <div className="space-y-2">
+              {templates.map((template, index) => (
+                <Input
+                  key={index}
+                  type="text"
+                  value={template}
+                  onChange={(e) => handleTemplateChange(index, e.target.value)}
+                  placeholder={`固定費${index + 1} (例: 家賃、光熱費など)`}
+                />
+              ))}
+            </div>
           </div>
           <Button 
             type="submit" 

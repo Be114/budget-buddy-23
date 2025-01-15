@@ -1,8 +1,27 @@
+import { useEffect, useState } from "react";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { ExpenseForm } from "@/components/expenses/ExpenseForm";
+import { supabase } from "@/integrations/supabase/client";
+import { Session } from "@supabase/supabase-js";
 
 const Index = () => {
-  const isAuthenticated = false; // TODO: Implement with Supabase auth
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -10,7 +29,7 @@ const Index = () => {
         <h1 className="text-3xl font-bold text-center text-primary mb-8">
           家計簿アプリ
         </h1>
-        {isAuthenticated ? (
+        {session ? (
           <div className="space-y-6">
             <ExpenseForm />
             {/* TODO: Add ExpenseList and ExpenseSummary components */}

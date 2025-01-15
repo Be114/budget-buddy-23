@@ -13,14 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
-const categories = {
-  food: "食費",
-  transport: "交通費",
-  daily: "日用品",
-  entertainment: "娯楽費",
-  other: "その他",
-};
-
 export const FixedExpenseList = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [amount, setAmount] = useState("");
@@ -33,7 +25,7 @@ export const FixedExpenseList = () => {
       const { data, error } = await supabase
         .from("fixed_expenses")
         .select("*")
-        .order("payment_day", { ascending: true });
+        .order("created_at", { ascending: true });
 
       if (error) throw error;
       return data;
@@ -89,10 +81,7 @@ export const FixedExpenseList = () => {
           <TableHeader>
             <TableRow>
               <TableHead>名称</TableHead>
-              <TableHead>カテゴリ</TableHead>
               <TableHead>金額</TableHead>
-              <TableHead>支払日</TableHead>
-              <TableHead>メモ</TableHead>
               <TableHead>操作</TableHead>
             </TableRow>
           </TableHeader>
@@ -100,7 +89,6 @@ export const FixedExpenseList = () => {
             {fixedExpenses.map((expense) => (
               <TableRow key={expense.id}>
                 <TableCell>{expense.name}</TableCell>
-                <TableCell>{categories[expense.category as keyof typeof categories]}</TableCell>
                 <TableCell>
                   {editingId === expense.id ? (
                     <Input
@@ -114,8 +102,6 @@ export const FixedExpenseList = () => {
                     `¥${expense.amount.toLocaleString()}`
                   )}
                 </TableCell>
-                <TableCell>{expense.payment_day}日</TableCell>
-                <TableCell>{expense.memo || "-"}</TableCell>
                 <TableCell>
                   {editingId === expense.id ? (
                     <Button

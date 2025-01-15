@@ -23,7 +23,7 @@ export const FixedExpenseForm = () => {
         throw new Error("ユーザーが見つかりません");
       }
 
-      const { error } = await supabase.from("fixed_expenses").insert({
+      const { error } = await supabase.from("fixed_expense_templates").insert({
         name,
         amount: 0,
         user_id: user.id,

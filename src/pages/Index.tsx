@@ -56,8 +56,8 @@ const Index = () => {
               </Dialog>
             </div>
             <div className="flex flex-col space-y-8">
-              <ExpenseSummary />
               <ExpenseList />
+              <ExpenseSummary />
             </div>
           </div>
         ) : (

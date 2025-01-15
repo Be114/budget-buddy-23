@@ -19,6 +19,7 @@ export const AuthForm = () => {
             },
           },
         }}
+        providers={[]}
         localization={{
           variables: {
             sign_in: {

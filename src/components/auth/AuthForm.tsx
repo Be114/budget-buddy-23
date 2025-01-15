@@ -10,9 +10,15 @@ export const AuthForm = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_OUT') {
-        setErrorMessage(""); // サインアウト時にエラーメッセージをクリア
+        setErrorMessage("");
+      }
+      if (event === 'USER_UPDATED' && !session) {
+        const { error } = await supabase.auth.getSession();
+        if (error) {
+          setErrorMessage(getErrorMessage(error));
+        }
       }
     });
 
@@ -25,6 +31,8 @@ export const AuthForm = () => {
         return "メールアドレスまたはパスワードが正しくありません。";
       case "Email not confirmed":
         return "メールアドレスの確認が完了していません。";
+      case "Email logins are disabled":
+        return "メールログインが無効になっています。";
       default:
         return error.message;
     }
@@ -64,9 +72,6 @@ export const AuthForm = () => {
               button_label: '新規登録',
             },
           },
-        }}
-        onError={(error) => {
-          setErrorMessage(getErrorMessage(error));
         }}
       />
     </Card>

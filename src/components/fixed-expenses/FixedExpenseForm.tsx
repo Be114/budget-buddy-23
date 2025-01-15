@@ -11,6 +11,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 const categories = [
   { id: "food", name: "食費" },
@@ -23,11 +24,11 @@ const categories = [
 export const FixedExpenseForm = () => {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
-  const [amount, setAmount] = useState("");
   const [paymentDay, setPaymentDay] = useState("");
   const [memo, setMemo] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +44,7 @@ export const FixedExpenseForm = () => {
       const { error } = await supabase.from("fixed_expenses").insert({
         name,
         category,
-        amount: parseInt(amount),
+        amount: 0, // 初期値として0を設定
         payment_day: parseInt(paymentDay),
         memo: memo || null,
         user_id: user.id,
@@ -52,14 +53,16 @@ export const FixedExpenseForm = () => {
       if (error) throw error;
 
       toast({
-        title: "固定費を登録しました",
-        description: `${name}（${amount}円）を登録しました`,
+        title: "固定費テンプレートを登録しました",
+        description: `${name}を登録しました`,
       });
+
+      // キャッシュを更新
+      queryClient.invalidateQueries({ queryKey: ["fixed-expenses"] });
 
       // フォームをリセット
       setName("");
       setCategory("");
-      setAmount("");
       setPaymentDay("");
       setMemo("");
     } catch (error) {
@@ -77,7 +80,7 @@ export const FixedExpenseForm = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-xl font-bold">固定費を登録</CardTitle>
+        <CardTitle className="text-xl font-bold">固定費テンプレートを登録</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -112,20 +115,6 @@ export const FixedExpenseForm = () => {
             </Select>
           </div>
           <div className="space-y-2">
-            <label htmlFor="amount" className="text-sm font-medium">
-              金額
-            </label>
-            <Input
-              id="amount"
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              required
-              placeholder="50000"
-              min="0"
-            />
-          </div>
-          <div className="space-y-2">
             <label htmlFor="paymentDay" className="text-sm font-medium">
               支払日
             </label>
@@ -157,7 +146,7 @@ export const FixedExpenseForm = () => {
             className="w-full bg-accent hover:bg-accent-hover"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "登録中..." : "登録する"}
+            {isSubmitting ? "登録中..." : "テンプレートを登録"}
           </Button>
         </form>
       </CardContent>

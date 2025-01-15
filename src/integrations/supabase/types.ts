@@ -42,6 +42,42 @@ export type Database = {
         }
         Relationships: []
       }
+      fixed_expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          id: string
+          memo: string | null
+          name: string
+          payment_day: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string
+          id?: string
+          memo?: string | null
+          name: string
+          payment_day: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          id?: string
+          memo?: string | null
+          name?: string
+          payment_day?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

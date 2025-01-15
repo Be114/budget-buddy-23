@@ -3,8 +3,16 @@ import { AuthForm } from "@/components/auth/AuthForm";
 import { ExpenseForm } from "@/components/expenses/ExpenseForm";
 import { ExpenseList } from "@/components/expenses/ExpenseList";
 import { ExpenseSummary } from "@/components/expenses/ExpenseSummary";
+import { FixedExpenseForm } from "@/components/fixed-expenses/FixedExpenseForm";
+import { FixedExpenseList } from "@/components/fixed-expenses/FixedExpenseList";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const Index = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -33,8 +41,21 @@ const Index = () => {
         </h1>
         {session ? (
           <div className="space-y-6">
-            <ExpenseForm />
+            <div className="flex justify-between items-center">
+              <ExpenseForm />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="bg-accent hover:bg-accent-hover">
+                    固定費を登録
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[500px]">
+                  <FixedExpenseForm />
+                </DialogContent>
+              </Dialog>
+            </div>
             <ExpenseSummary />
+            <FixedExpenseList />
             <ExpenseList />
           </div>
         ) : (

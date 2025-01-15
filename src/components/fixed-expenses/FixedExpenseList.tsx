@@ -74,7 +74,7 @@ export const FixedExpenseList = () => {
   }
 
   return (
-    <div className="mt-8">
+    <div className="bg-white p-6 rounded-lg shadow-sm">
       <h2 className="text-xl font-bold mb-4">固定費一覧</h2>
       <div className="rounded-md border">
         <Table>

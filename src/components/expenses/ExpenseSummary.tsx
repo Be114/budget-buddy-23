@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart";
 import {
   LineChart,
@@ -52,7 +51,7 @@ export const ExpenseSummary = () => {
   });
 
   return (
-    <div className="mt-8">
+    <div className="bg-white p-6 rounded-lg shadow-sm">
       <h2 className="text-xl font-bold mb-4">日別支出推移</h2>
       <div className="h-[300px]">
         <ChartContainer

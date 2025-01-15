@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const categories = [
   { id: "food", name: "食費" },
@@ -24,15 +25,43 @@ export const ExpenseForm = () => {
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState("");
   const [memo, setMemo] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement expense submission logic with Supabase
-    toast({
-      title: "Coming soon",
-      description: "Expense tracking will be implemented with Supabase",
-    });
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase.from("expenses").insert({
+        date,
+        category,
+        amount: parseInt(amount),
+        memo: memo || null,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "支出を記録しました",
+        description: `${amount}円を${categories.find(cat => cat.id === category)?.name || category}として記録しました`,
+      });
+
+      // フォームをリセット
+      setDate("");
+      setCategory("");
+      setAmount("");
+      setMemo("");
+    } catch (error) {
+      console.error("Error inserting expense:", error);
+      toast({
+        title: "エラーが発生しました",
+        description: "支出の記録に失敗しました。もう一度お試しください。",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -58,7 +87,7 @@ export const ExpenseForm = () => {
             <label htmlFor="category" className="text-sm font-medium">
               カテゴリ
             </label>
-            <Select value={category} onValueChange={setCategory}>
+            <Select value={category} onValueChange={setCategory} required>
               <SelectTrigger>
                 <SelectValue placeholder="カテゴリを選択" />
               </SelectTrigger>
@@ -82,6 +111,7 @@ export const ExpenseForm = () => {
               onChange={(e) => setAmount(e.target.value)}
               required
               placeholder="1000"
+              min="0"
             />
           </div>
           <div className="space-y-2">
@@ -96,8 +126,12 @@ export const ExpenseForm = () => {
               placeholder="買い物メモ"
             />
           </div>
-          <Button type="submit" className="w-full bg-accent hover:bg-accent-hover">
-            記録する
+          <Button 
+            type="submit" 
+            className="w-full bg-accent hover:bg-accent-hover"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "記録中..." : "記録する"}
           </Button>
         </form>
       </CardContent>

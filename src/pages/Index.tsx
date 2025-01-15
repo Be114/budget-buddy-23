@@ -41,6 +41,7 @@ const Index = () => {
         </h1>
         {session ? (
           <div className="flex flex-col space-y-8">
+            <FixedExpenseList />
             <div className="flex justify-between items-center">
               <ExpenseForm />
               <Dialog>
@@ -56,7 +57,6 @@ const Index = () => {
             </div>
             <div className="flex flex-col space-y-8">
               <ExpenseSummary />
-              <FixedExpenseList />
               <ExpenseList />
             </div>
           </div>

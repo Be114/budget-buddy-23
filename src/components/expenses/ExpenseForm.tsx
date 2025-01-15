@@ -33,11 +33,19 @@ export const ExpenseForm = () => {
     setIsSubmitting(true);
 
     try {
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("ユーザーが見つかりません");
+      }
+
       const { error } = await supabase.from("expenses").insert({
         date,
         category,
         amount: parseInt(amount),
         memo: memo || null,
+        user_id: user.id,
       });
 
       if (error) throw error;

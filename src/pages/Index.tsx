@@ -40,7 +40,7 @@ const Index = () => {
           家計簿アプリ
         </h1>
         {session ? (
-          <div className="space-y-12">
+          <div className="flex flex-col space-y-8">
             <div className="flex justify-between items-center">
               <ExpenseForm />
               <Dialog>
@@ -54,7 +54,7 @@ const Index = () => {
                 </DialogContent>
               </Dialog>
             </div>
-            <div className="grid gap-12">
+            <div className="flex flex-col space-y-8">
               <ExpenseSummary />
               <FixedExpenseList />
               <ExpenseList />
